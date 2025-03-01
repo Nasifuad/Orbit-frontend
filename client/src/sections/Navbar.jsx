@@ -3,19 +3,20 @@ import { navLinks } from "../constants/constants.jsx";
 import { Button } from "@/components/ui/button";
 import logo from "../assets/images/orbit.svg";
 import { useStore } from "@/store/ZusStore.js";
-import DarkLight from "@/components/DarkLight/DarkLight.jsx";
+// import DarkLight from "@/components/DarkLight/DarkLight.jsx";
 
 const Navbar = () => {
-  const { currentUser: user, logout } = useStore();
+  const { currentUser: user, logout, isLoggedIn } = useStore();
+
   return (
     <>
-      <div className="flex flex-col gap-3 h-screen p-4">
+      <div className="flex flex-col gap-3 h-full bg-black sticky top-0 p-4 z-50">
         <NavLink to="/">
           {" "}
           <img
             src={logo}
             alt="logo"
-            className="xl:w-[100px] xl:h-[100px] w-20 h-20 sm:mx-auto justify-start xl:mx-1"
+            className="xl:w-[100px] xl:h-[100px] w-20 h-20 sm:mx-auto justify-start xl:mx-1 "
           />
         </NavLink>
 
@@ -56,7 +57,7 @@ const Navbar = () => {
           Post
         </h1>
 
-        {user ? (
+        {isLoggedIn ? (
           <>
             <h1 className="text-2xl text-center text-white font-bold">
               {user}

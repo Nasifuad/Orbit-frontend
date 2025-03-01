@@ -3,8 +3,11 @@ import cover from "../assets/images/cover.jpeg";
 import { MdVerified } from "react-icons/md";
 import { miniNavProfile } from "@/constants/constants";
 import MiniNav from "@/components/MiniNav";
+import { useStore } from "@/store/ZusStore";
 
 const Profile = () => {
+  const { current_user } = useStore();
+  console.log(current_user);
   return (
     <>
       <div className="relative border p-4">
@@ -21,9 +24,7 @@ const Profile = () => {
               className="  w-32 rounded-full border-4 border-gray-400 hover:opacity-80"
             />
             <div className="mt-2 flex gap-2">
-              <p className="text-white text-xl font-bold">
-                {user ? user : "Guest"}
-              </p>
+              <p className="text-white text-xl font-bold">Nasif fuad</p>
               <div className="px-2 flex justify-center items-center gap-2 border rounded-full">
                 <MdVerified className="text-blue-600" />
                 <p className="text-white hidden  xl:flex">Get Verified</p>

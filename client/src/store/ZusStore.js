@@ -1,17 +1,21 @@
 import { create } from "zustand";
 import axios from "axios";
-
-const backendUri = "http://localhost:5050/api/v1/user";
+import { toast } from "react-toastify";
+const backendUri = "http://localhost:5050/api/v1/user"; // Replace with your actual backend URI ok
+axios.defaults.withCredentials = true;
 export const useStore = create((set) => ({
   current_user: null,
-
   setUser: (user) => set({ current_user: user }),
+  user_data: null,
+  setUserData: (data) => set({ user_data: data }),
   checkUser: false,
-  checkLogin: false,
+  isLoggedIn: false,
+  isLogining: false,
   isSigningUp: false,
 
   login: async (data) => {
     try {
+      set({ isLogining: true });
       console.log(data);
       const { userName, password } = data;
       console.log("Logging in with:", { userName, password });
@@ -28,13 +32,46 @@ export const useStore = create((set) => ({
         }
       );
       console.log("Data in the store from server", response);
-      return response;
+      if (response.data.status) {
+        toast.success("Login successful");
+        set({ current_user: response.data.data });
+        set({ isLoggedIn: true });
+        return true;
+      }
+      toast.error(response.data.message);
     } catch (error) {
       console.error("Login error:", error.response?.data || error.message);
-      throw error;
+      toast.error(error.response?.data || error.message);
+    } finally {
+      set({ isLogining: false });
     }
   },
 
+  signup: async (formData) => {
+    try {
+      const response = await axios.post(`${backendUri}/register`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log("Registration response:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Registration error:", error);
+      throw new Error(
+        error.response ? error.response.data.message : "Something went wrong"
+      );
+    }
+  },
+  getUser: async () => {
+    try {
+      const response = axios.get(`${backendUri}/user`);
+      console.log(response);
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  },
   logout: async () => {
     try {
       const data = axios.post(`${backendUri}/logout`);
@@ -43,32 +80,15 @@ export const useStore = create((set) => ({
       console.log(error);
     }
   },
+  checkLogged: async () => {
+    try {
+      const response = axios.get(`${backendUri}/check-cookies`);
+      console.log(response);
+      if (response.data.status) {
+        set({ isLoggedIn: true });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
 }));
-
-// export const useFetchUser = () => {
-//   const setUser = useStore((state) => state.setUser);
-
-//   useQuery({
-//     queryKey: ["user"],
-//     queryFn: async () => {
-//       const token = localStorage.getItem("token");
-//       const res = await fetch("http://localhost:5050/api/profile", {
-//         method: "GET",
-//         headers: {
-//           Authorization: token,
-//         },
-//       });
-//       if (!res.ok) {
-//         throw new Error("Failed to fetch user data");
-//       }
-//       console.log(res.json());
-//       return res.json();
-//     },
-//     onSuccess: (data) => {
-//       setUser(data.username);
-//     },
-//     onError: (error) => {
-//       console.error("Error fetching user data:", error);
-//     },
-//   });
-// };

@@ -4,10 +4,10 @@ import Aside from "../sections/Aside";
 
 const Layout = () => {
   return (
-    <div className=" h-screen w-full xl:mx-auto bg-black  mr-auto">
-      <div className="container mx-auto  flex justify-between items-start ">
+    <div className="w-full min-h-screen bg-black">
+      <div className="container mx-auto flex justify-between items-start h-full">
         <Navbar />
-        <div className="flex flex-col border-[#2c2f33] border-[0.5px] h-screen gap-3 w-full  ">
+        <div className="flex flex-col border-[#2c2f33] border-[0.5px] min-h-screen w-full ">
           <Outlet />
         </div>
         <Aside />
